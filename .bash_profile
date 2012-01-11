@@ -1,10 +1,15 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+# Fix 'cd' spelling errors and don't blow away history on shell exit
+shopt -s cdspell histappend checkwinsize
+
 export PATH=/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/local/mysql/bin:/var/lib/gems/1.8/bin:$PATH
 export HISTCONTROL=ignoredups  # don't put duplicate lines in the history. See bash(1) for more options
 export EDITOR=vim
 export BROWSER=chromium-browser
+export CLICOLOR=1
+export LSCOLORS=dxfxcxdxbxegedabagacad
 
 export PYTHONPATH=.
 export DJANGO_SETTINGS_MODULE=settings
@@ -14,24 +19,17 @@ export PS1='\[\033]0;\w\007\033[32m\]\u@\h \[\033[33m\w\033[0m\]\n$(parse_git_br
 alias pss="PS1='[\u:\W]\$ '"
 alias psl='\[\033]0;\w\007\033[32m\]\u@\h \[\033[33m\w\033[0m\]\n$(parse_git_branch)$ '
 
-# loads RVM into a shell session.
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
-
-# Fix 'cd' spelling errors and don't blow away history on shell exit
-#TODO try taking away checkwinsize; suspect that's why terminal window 
-#   resizes with font size change
-shopt -s cdspell histappend checkwinsize
-
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(lesspipe)"
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session.
 
-# enable color support of ls
-# TODO this is dumb.  figure out sensible `ls` colors, for reals.
-export CLICOLOR=1
-export LSCOLORS=dxfxcxdxbxegedabagacad   # might just work on mac.
-if [ "$TERM" != "dumb" ]; then
-    alias ls='ls --color'
-fi
+# set the prompt for interactive shells
+# http://en.tldp.org/HOWTO/Bash-Prompt-HOWTO/
+parse_git_branch() {
+    # returns '(git branch name) ' if inside git directory, 
+    # otherwise returns ''
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1) /'
+}
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -48,10 +46,6 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-# set the prompt for interactive shells
-# http://en.tldp.org/HOWTO/Bash-Prompt-HOWTO/
-parse_git_branch() {
-    # returns '(git branch name) ' if inside git directory, 
-    # otherwise returns ''
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1) /'
-}
+if [ -f ~/.bash_vagrant ]; then
+    . ~/.bash_vagrant
+fi

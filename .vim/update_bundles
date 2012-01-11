@@ -19,7 +19,10 @@ git_bundles = [
   "git://github.com/kristoferjoseph/molokai.vim",
   "git://github.com/vim-scripts/IndexedSearch",
   "git://github.com/vim-scripts/Zenburn.git",
-  "git://github.com/vim-scripts/sessionman.vim"
+  "git://github.com/vim-scripts/sessionman.vim",
+  "git://github.com/kevinw/pyflakes-vim.git",
+  "git://github.com/nvie/vim-pep8",
+  "git://github.com/vim-scripts/cscope_macros.vim.git",
 ]
 
 vim_org_scripts = [
